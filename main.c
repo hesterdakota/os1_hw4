@@ -73,7 +73,7 @@ long double timeElapsed(struct timeval start_time, struct timeval end_time)    {
 
 int main(int argc, char* argv[])  {
 
-    int tests = 10; // number of tests to be run
+    int tests = 20; // number of tests to be run
     FILE *ofptr = NULL; // output file
     char* ofname = "output.csv";
 
