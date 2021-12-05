@@ -73,7 +73,7 @@ long double timeElapsed(struct timeval start_time, struct timeval end_time)    {
 
 int main(int argc, char* argv[])  {
 
-    int tests = 1; // number of tests to be run
+    int tests = 10; // number of tests to be run
     FILE *ofptr = NULL; // output file
     char* ofname = "output.csv";
 
@@ -120,9 +120,9 @@ int main(int argc, char* argv[])  {
     // standard concurrent linked list test
     printf("standard concurrent test\n");
     // package arguments
-    c_list_T* c_list = (c_list_T*) malloc(sizeof(c_list_T));
+    c_list_T* c_list_1 = (c_list_T*) malloc(sizeof(c_list_T));
     c_arg_T* c_args = (c_arg_T*) malloc(sizeof(c_arg_T));
-    c_args->c_list = c_list;
+    c_args->c_list = c_list_1;
     c_args->iterations = 10000;
 
     for (int i = 0; i < tests; ++i) {
@@ -131,8 +131,8 @@ int main(int argc, char* argv[])  {
         fflush(stdout);
 
         // create standard concurrent linked list
-        c_list = (c_list_T*) malloc(sizeof(c_list_T));
-        cListInit(c_list);
+        c_list_1 = (c_list_T*) malloc(sizeof(c_list_T));
+        cListInit(c_list_1);
 
         gettimeofday(&start_time, NULL); // start time
 
@@ -150,13 +150,13 @@ int main(int argc, char* argv[])  {
         fflush(ofptr);
 
         // delete list
-        free(c_list);
+        free(c_list_1);
     }
     
     // delete arguments
     free(c_args);
     c_args = NULL;
-    c_list = NULL;
+    c_list_1 = NULL;
     
     // done
     printf("\nstandard concurrent tests done\n");
@@ -166,9 +166,9 @@ int main(int argc, char* argv[])  {
     // hand over hand concurrent linked list
     printf("hand over hand test\n");
     // package arguments
-    h_list_T* h_list = (h_list_T*) malloc(sizeof(h_list_T));
+    h_list_T* h_list_1 = (h_list_T*) malloc(sizeof(h_list_T));
     h_arg_T* h_args = (h_arg_T*) malloc(sizeof(h_arg_T));
-    h_args->h_list = h_list;
+    h_args->h_list = h_list_1;
     h_args->iterations = 10000;
 
     for (int i = 0; i < tests; ++i) { // run test n times
@@ -177,8 +177,8 @@ int main(int argc, char* argv[])  {
         fflush(stdout);
 
         // create hoh linked list
-        h_list = (h_list_T*) malloc(sizeof(h_list));
-        hListInit(h_list);
+        h_list_1 = (h_list_T*) malloc(sizeof(h_list_T));
+        hListInit(h_list_1);
 
         // get start time
         gettimeofday(&start_time, NULL);
@@ -197,13 +197,13 @@ int main(int argc, char* argv[])  {
         fflush(ofptr);
 
         // delete list contents
-        free(h_list);
+        free(h_list_1);
     }
 
     // delete arguments
     free(c_args);
     h_args = NULL;
-    h_list = NULL; 
+    h_list_1 = NULL; 
 
     // done
     printf("\nhand over hand tests done\n");
@@ -217,14 +217,14 @@ int main(int argc, char* argv[])  {
     // standard concurrent linked list test
     printf("standard concurrent test\n");
     // package arguments
-    c_list = (c_list_T*) malloc(sizeof(c_list_T));
+    c_list_T* c_list_2 = (c_list_T*) malloc(sizeof(c_list_T));
     // 1 million inserts
     c_arg_T* c_args_insert = (c_arg_T*) malloc(sizeof(c_arg_T));
-    c_args_insert->c_list = c_list;
+    c_args_insert->c_list = c_list_2;
     c_args_insert->iterations = 1000000;
     // 10000 lookups
     c_arg_T* c_args_lookup = (c_arg_T*) malloc(sizeof(c_arg_T));
-    c_args_lookup->c_list = c_list;
+    c_args_lookup->c_list = c_list_2;
     c_args_lookup->iterations = 10000;
 
     for (int i = 0; i < tests; ++i) {
@@ -233,8 +233,7 @@ int main(int argc, char* argv[])  {
         fflush(stdout);
 
         // create standard concurrent linked list
-        c_list = (c_list_T*) malloc(sizeof(c_list_T));
-        cListInit(c_list);
+        cListInit(c_list_2);
 
         gettimeofday(&start_time, NULL); // start time
 
@@ -253,7 +252,11 @@ int main(int argc, char* argv[])  {
         fflush(ofptr);
 
         // delete list;
-        free(c_list);
+        free(c_list_2);
+        c_list_2 = NULL;
+        c_list_2 = (c_list_T*) malloc(sizeof(c_list_T));
+        c_args_insert->c_list = c_list_2; // something or rather
+        c_args_lookup->c_list = c_list_2;
     }
     
     // delete arguments
@@ -261,7 +264,8 @@ int main(int argc, char* argv[])  {
     c_args_insert = NULL;
     free(c_args_lookup);
     c_args_lookup = NULL;
-    c_list = NULL;
+    free(c_list_2);
+    c_list_2 = NULL;
 
     // done
     printf("\nstandard concurrent tests done\n");
@@ -271,14 +275,15 @@ int main(int argc, char* argv[])  {
     // hand over hand linked list test
     printf("hand over hand test\n");
     // package arguments
-    h_list = (h_list_T*) malloc(sizeof(h_list_T));
+    h_list_T* h_list_2 = (h_list_T*) malloc(sizeof(h_list_T));
+    hListInit(h_list_2);
     // 1 million inserts
     h_arg_T* h_args_insert = (h_arg_T*) malloc(sizeof(h_arg_T));
-    h_args_insert->h_list = h_list;
+    h_args_insert->h_list = h_list_2;
     h_args_insert->iterations = 1000000;
     // 10000 lookups
     h_arg_T* h_args_lookup = (h_arg_T*) malloc(sizeof(h_arg_T));
-    h_args_lookup->h_list = h_list;
+    h_args_lookup->h_list = h_list_2;
     h_args_lookup->iterations = 10000;
 
     for (int i = 0; i < tests; ++i) {
@@ -286,9 +291,6 @@ int main(int argc, char* argv[])  {
         printf("\r%i/%i tests done\t %% %2.2f", i, tests, ((float) i * 100.0)/((float) tests));
         fflush(stdout);
 
-        // create hand over hand linked list
-        h_list = (h_list_T*) malloc(sizeof(h_list_T));
-        hListInit(h_list);
 
         gettimeofday(&start_time, NULL); // start time
 
@@ -307,7 +309,14 @@ int main(int argc, char* argv[])  {
         fflush(ofptr);
 
         // delete list;
-        free(h_list);
+        free(h_list_2);
+        h_list_2 = NULL;
+        // create new list
+        h_list_2 = (h_list_T*) malloc(sizeof(h_list_T));
+        hListInit(h_list_2);
+        // update args
+        h_args_insert->h_list = h_list_2;
+        h_args_lookup->h_list = h_list_2;
     }
     
     // delete arguments
@@ -315,7 +324,8 @@ int main(int argc, char* argv[])  {
     h_args_insert = NULL;
     free(h_args_lookup);
     h_args_lookup = NULL;
-    h_list = NULL;
+    free(h_list_2);
+    h_list_2 = NULL;
 
     // done
     printf("\nhand over hand tests done\n");
@@ -330,11 +340,11 @@ int main(int argc, char* argv[])  {
     printf("standard concurrent test\n");
     
     // create list with 1 million random integers
-    c_list = (c_list_T*) malloc(sizeof(c_list_T));
-    cListInit(c_list);
+    c_list_T* c_list_3 = (c_list_T*) malloc(sizeof(c_list_T));
+    cListInit(c_list_3);
     // package arguments for insert subroutine
     c_args = (c_arg_T*) malloc(sizeof(c_arg_T));
-    c_args->c_list = c_list;
+    c_args->c_list = c_list_3;
     c_args->iterations = 1000000;
     // call insert subroutine
     cInsert(c_args);
@@ -365,8 +375,8 @@ int main(int argc, char* argv[])  {
     }
 
     // tidy up
-    free(c_list);
-    c_list = NULL;
+    free(c_list_3);
+    c_list_3 = NULL;
     free(c_args);
     c_args = NULL;
 
@@ -379,11 +389,11 @@ int main(int argc, char* argv[])  {
     printf("hand over hand test\n");
 
     // create list with 1 million random integers
-    h_list = (h_list_T*) malloc(sizeof(h_list_T));
-    hListInit(h_list);
+    h_list_T* h_list_3 = (h_list_T*) malloc(sizeof(h_list_T));
+    hListInit(h_list_3);
     // package arguments for insert subroutine
     h_args = (h_arg_T*) malloc(sizeof(h_arg_T));
-    h_args->h_list = h_list;
+    h_args->h_list = h_list_3;
     h_args->iterations = 1000000;
     // call insert subroutine
     hInsert(h_args);
@@ -414,8 +424,8 @@ int main(int argc, char* argv[])  {
     }
 
     // tidy up
-    free(h_list);
-    h_list = NULL;
+    free(h_list_3);
+    h_list_3 = NULL;
     free(h_args);
     h_args = NULL;
 
